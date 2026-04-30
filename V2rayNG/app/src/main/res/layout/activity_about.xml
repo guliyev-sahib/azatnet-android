@@ -1,171 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/azatnet_background"
     android:fitsSystemWindows="true">
 
-    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <LinearLayout
+        <ImageView
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            app:srcCompat="@drawable/ic_azatnet_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="@string/app_name"
+            android:textColor="@color/azatnet_text_primary"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/azatnet_text_secondary"
+            android:textSize="14sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_faq"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="top"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/azatnet_surface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
-            <LinearLayout
-                android:id="@+id/layout_soure_ccode"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center|start"
-                android:orientation="horizontal"
-                android:padding="@dimen/padding_spacing_dp16">
+                android:fontFamily="@font/montserrat_regular"
+                android:padding="16dp"
+                android:text="@string/title_faq_short"
+                android:textColor="@color/azatnet_text_primary"
+                android:textSize="16sp" />
+        </com.google.android.material.card.MaterialCardView>
 
-                <ImageView
-                    android:layout_width="@dimen/image_size_dp24"
-                    android:layout_height="@dimen/image_size_dp24"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ic_source_code_24dp" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_privacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/azatnet_surface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/padding_spacing_dp16"
-                    android:text="@string/title_source_code"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_oss_licenses"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center|start"
-                android:orientation="horizontal"
-                android:padding="@dimen/padding_spacing_dp16">
+                android:fontFamily="@font/montserrat_regular"
+                android:padding="16dp"
+                android:text="@string/title_privacy_policy"
+                android:textColor="@color/azatnet_text_primary"
+                android:textSize="16sp" />
+        </com.google.android.material.card.MaterialCardView>
 
-                <ImageView
-                    android:layout_width="@dimen/image_size_dp24"
-                    android:layout_height="@dimen/image_size_dp24"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/license_24px" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardBackgroundColor="@color/azatnet_surface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/padding_spacing_dp16"
-                    android:text="@string/title_oss_license"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_feedback"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center|start"
-                android:orientation="horizontal"
-                android:padding="@dimen/padding_spacing_dp16">
-
-                <ImageView
-                    android:layout_width="@dimen/image_size_dp24"
-                    android:layout_height="@dimen/image_size_dp24"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ic_feedback_24dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/padding_spacing_dp16"
-                    android:text="@string/title_pref_feedback"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/layout_tg_channel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center|start"
-                android:orientation="horizontal"
-                android:padding="@dimen/padding_spacing_dp16">
-
-                <ImageView
-                    android:layout_width="@dimen/image_size_dp24"
-                    android:layout_height="@dimen/image_size_dp24"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ic_telegram_24dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/padding_spacing_dp16"
-                    android:text="@string/title_tg_channel"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_privacy_policy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center|start"
-                android:orientation="horizontal"
-                android:padding="@dimen/padding_spacing_dp16">
-
-                <ImageView
-                    android:layout_width="@dimen/image_size_dp24"
-                    android:layout_height="@dimen/image_size_dp24"
-                    android:importantForAccessibility="no"
-                    app:srcCompat="@drawable/ic_privacy_24dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/padding_spacing_dp16"
-                    android:text="@string/title_privacy_policy"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_spacing_dp16">
-
-                <TextView
-                    android:id="@+id/tv_version"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_about"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-
-                <TextView
-                    android:id="@+id/tv_app_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_about"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-            </LinearLayout>
-
-        </LinearLayout>
-
+                android:fontFamily="@font/montserrat_regular"
+                android:padding="16dp"
+                android:text="@string/title_contact_us"
+                android:textColor="@color/azatnet_text_primary"
+                android:textSize="16sp" />
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-
 </ScrollView>
-

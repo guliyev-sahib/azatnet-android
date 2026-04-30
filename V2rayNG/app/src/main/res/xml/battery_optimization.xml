@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Placeholder resource for battery / backup-related tooling; runtime exemption uses Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS. -->
+<full-backup-content xmlns:android="http://schemas.android.com/apk/res/android" />

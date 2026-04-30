@@ -263,6 +263,26 @@ object V2RayServiceManager {
     }
 
     /**
+     * Measures current connection delay in milliseconds via xray core.
+     * Call from a background thread; returns -1 if core is not running or on error.
+     */
+    fun measureCurrentDelayMs(): Long {
+        if (!coreController.isRunning) {
+            return -1L
+        }
+        return try {
+            var time = coreController.measureDelay(SettingsManager.getDelayTestUrl())
+            if (time < 0) {
+                time = coreController.measureDelay(SettingsManager.getDelayTestUrl(true))
+            }
+            time
+        } catch (e: Exception) {
+            Log.e(AppConfig.TAG, "measureCurrentDelayMs failed", e)
+            -1L
+        }
+    }
+
+    /**
      * Measures the connection delay for the current V2Ray configuration.
      * Tests with primary URL first, then falls back to alternative URL if needed.
      * Also fetches remote IP information if the delay test was successful.

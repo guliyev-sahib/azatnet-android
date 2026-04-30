@@ -2,7 +2,9 @@ package com.v2ray.ang.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.preference.CheckBoxPreference
+import androidx.preference.Preference
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
@@ -20,13 +22,31 @@ import com.v2ray.ang.helper.MmkvPreferenceDataStore
 import com.v2ray.ang.util.Utils
 import java.util.concurrent.TimeUnit
 
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : AzatNetBrandedBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentViewWithToolbar(R.layout.activity_settings, showHomeAsUp = true, title = getString(R.string.title_settings))
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fragment_settings,
+                    SettingsFragment().apply {
+                        arguments = bundleOf(SettingsFragment.ARG_MODE to SettingsFragment.MODE_SIMPLE)
+                    }
+                )
+                .commit()
+        }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
+
+        companion object {
+            const val ARG_MODE = "settings_mode"
+            const val MODE_SIMPLE = "simple"
+            const val MODE_FULL = "full"
+        }
+
+        private fun isFullMode(): Boolean = arguments?.getString(ARG_MODE) == MODE_FULL
 
         private val localDns by lazy { findPreference<CheckBoxPreference>(AppConfig.PREF_LOCAL_DNS_ENABLED) }
         private val fakeDns by lazy { findPreference<CheckBoxPreference>(AppConfig.PREF_FAKE_DNS_ENABLED) }
@@ -57,14 +77,19 @@ class SettingsActivity : BaseActivity() {
         private val useHevTun by lazy { findPreference<CheckBoxPreference>(AppConfig.PREF_USE_HEV_TUNNEL) }
 
         override fun onCreatePreferences(bundle: Bundle?, s: String?) {
-            // Use MMKV as the storage backend for all Preferences
-            // This prevents inconsistencies between SharedPreferences and MMKV
             preferenceManager.preferenceDataStore = MmkvPreferenceDataStore()
 
-            addPreferencesFromResource(R.xml.pref_settings)
+            if (isFullMode()) {
+                addPreferencesFromResource(R.xml.pref_settings)
+                initFullModeListeners()
+            } else {
+                addPreferencesFromResource(R.xml.pref_azatnet_simple)
+            }
 
             initPreferenceSummaries()
+        }
 
+        private fun initFullModeListeners() {
             localDns?.setOnPreferenceChangeListener { _, any ->
                 updateLocalDns(any as Boolean)
                 true
@@ -154,18 +179,18 @@ class SettingsActivity : BaseActivity() {
 
         override fun onStart() {
             super.onStart()
-            updateHevTunSettings(MmkvManager.decodeSettingsBool(AppConfig.PREF_USE_HEV_TUNNEL, true))
+            if (!isFullMode()) {
+                migrateAzatNetSimplePreferences()
+                return
+            }
+            updateHevTunSettings(MmkvManager.decodeSettingsBool(AppConfig.PREF_USE_HEV_TUNNEL, false))
 
-            // Initialize mode-dependent UI states
             updateMode(MmkvManager.decodeSettingsString(AppConfig.PREF_MODE, VPN))
 
-            // Initialize mux-dependent UI states
             updateMux(MmkvManager.decodeSettingsBool(AppConfig.PREF_MUX_ENABLED, false))
 
-            // Initialize fragment-dependent UI states
             updateFragment(MmkvManager.decodeSettingsBool(AppConfig.PREF_FRAGMENT_ENABLED, false))
 
-            // Initialize auto-update interval state
             autoUpdateInterval?.isEnabled = MmkvManager.decodeSettingsBool(AppConfig.SUBSCRIPTION_AUTO_UPDATE, false)
         }
 
@@ -261,6 +286,18 @@ class SettingsActivity : BaseActivity() {
         private fun updateHevTunSettings(enabled: Boolean) {
             hevTunLogLevel?.isEnabled = enabled
             hevTunRwTimeout?.isEnabled = enabled
+        }
+
+        private fun migrateAzatNetSimplePreferences() {
+            val allowedLang = setOf("ru", "tk", "en", "tr")
+            val lang = MmkvManager.decodeSettingsString(AppConfig.PREF_LANGUAGE) ?: "ru"
+            if (lang !in allowedLang) {
+                MmkvManager.encodeSettings(AppConfig.PREF_LANGUAGE, "ru")
+            }
+            val mode = MmkvManager.decodeSettingsString(AppConfig.PREF_UI_MODE_NIGHT, "2")
+            if (mode == "0") {
+                MmkvManager.encodeSettings(AppConfig.PREF_UI_MODE_NIGHT, "2")
+            }
         }
     }
 

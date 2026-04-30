@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="ru"
+        android:entries="@array/azatnet_language_names"
+        android:entryValues="@array/azatnet_language_values"
+        android:key="pref_language"
+        android:summary="%s"
+        android:title="@string/title_language_azatnet" />
+
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/azatnet_ui_mode_names"
+        android:entryValues="@array/azatnet_ui_mode_values"
+        android:key="pref_ui_mode_night"
+        android:summary="%s"
+        android:title="@string/title_design_azatnet" />
+
+</PreferenceScreen>

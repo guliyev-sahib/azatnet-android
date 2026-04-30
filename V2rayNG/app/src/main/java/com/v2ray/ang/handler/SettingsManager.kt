@@ -378,6 +378,8 @@ object SettingsManager {
             Language.TRADITIONAL_CHINESE -> Locale.TRADITIONAL_CHINESE
             Language.VIETNAMESE -> Locale.forLanguageTag("vi")
             Language.RUSSIAN -> Locale.forLanguageTag("ru")
+            Language.TURKMEN -> Locale.forLanguageTag("tk")
+            Language.TURKISH -> Locale.forLanguageTag("tr")
             Language.PERSIAN -> Locale.forLanguageTag("fa")
             Language.ARABIC -> Locale.forLanguageTag("ar")
             Language.BANGLA -> Locale.forLanguageTag("bn")
@@ -420,9 +422,7 @@ object SettingsManager {
      * Check if HEV TUN is being used.
      * @return True if HEV TUN is used, false otherwise.
      */
-    fun isUsingHevTun(): Boolean {
-        return MmkvManager.decodeSettingsBool(AppConfig.PREF_USE_HEV_TUNNEL, true)
-    }
+    fun isUsingHevTun(): Boolean = false
 
     /**
      * Check if VPN mode is enabled.
@@ -439,11 +439,12 @@ object SettingsManager {
     private fun ensureDefaultSettings() {
         // Write defaults in the exact order requested by the user
         ensureDefaultValue(AppConfig.PREF_MODE, AppConfig.VPN)
+        ensureDefaultValue(AppConfig.PREF_LOCAL_DNS_ENABLED, true)
         ensureDefaultValue(AppConfig.PREF_VPN_DNS, AppConfig.DNS_VPN)
         ensureDefaultValue(AppConfig.PREF_VPN_MTU, AppConfig.VPN_MTU.toString())
         ensureDefaultValue(AppConfig.SUBSCRIPTION_AUTO_UPDATE_INTERVAL, AppConfig.SUBSCRIPTION_DEFAULT_UPDATE_INTERVAL)
         ensureDefaultValue(AppConfig.PREF_SOCKS_PORT, AppConfig.PORT_SOCKS)
-        ensureDefaultValue(AppConfig.PREF_REMOTE_DNS, AppConfig.DNS_PROXY)
+        ensureDefaultValue(AppConfig.PREF_REMOTE_DNS, "https://8.8.8.8/dns-query")
         ensureDefaultValue(AppConfig.PREF_DOMESTIC_DNS, AppConfig.DNS_DIRECT)
         ensureDefaultValue(AppConfig.PREF_DELAY_TEST_URL, AppConfig.DELAY_TEST_URL)
         ensureDefaultValue(AppConfig.PREF_IP_API_URL, AppConfig.IP_API_URL)
@@ -456,6 +457,14 @@ object SettingsManager {
 
     private fun ensureDefaultValue(key: String, default: String) {
         if (MmkvManager.decodeSettingsString(key).isNullOrEmpty()) {
+            MmkvManager.encodeSettings(key, default)
+        }
+    }
+
+    private fun ensureDefaultValue(key: String, default: Boolean) {
+        val valueIfMissingFalse = MmkvManager.decodeSettingsBool(key, false)
+        val valueIfMissingTrue = MmkvManager.decodeSettingsBool(key, true)
+        if (valueIfMissingFalse != valueIfMissingTrue) {
             MmkvManager.encodeSettings(key, default)
         }
     }

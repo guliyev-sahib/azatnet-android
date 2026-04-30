@@ -438,19 +438,39 @@ object V2rayConfigManager {
     private fun getRouting(v2rayConfig: V2rayConfig): Boolean {
         try {
 
-            v2rayConfig.routing.domainStrategy =
-                MmkvManager.decodeSettingsString(AppConfig.PREF_ROUTING_DOMAIN_STRATEGY)
-                    ?: "AsIs"
+            v2rayConfig.routing.domainStrategy = "UseIP"
 
             val rulesetItems = MmkvManager.decodeRoutingRulesets()
             rulesetItems?.forEach { key ->
                 getRoutingUserRule(key, v2rayConfig)
+            }
+
+            if (!hasCatchAllTcpUdpProxyRule(v2rayConfig.routing.rules)) {
+                v2rayConfig.routing.rules.add(
+                    RulesBean(
+                        network = "tcp,udp",
+                        outboundTag = AppConfig.TAG_PROXY,
+                    )
+                )
             }
         } catch (e: Exception) {
             Log.e(AppConfig.TAG, "Failed to configure routing", e)
             return false
         }
         return true
+    }
+
+    private fun hasCatchAllTcpUdpProxyRule(rules: List<RulesBean>): Boolean {
+        return rules.any { rule ->
+            rule.network == "tcp,udp" &&
+                rule.outboundTag == AppConfig.TAG_PROXY &&
+                rule.balancerTag == null &&
+                rule.ip.isNullOrEmpty() &&
+                rule.domain.isNullOrEmpty() &&
+                rule.inboundTag.isNullOrEmpty() &&
+                rule.port == null &&
+                rule.protocol.isNullOrEmpty()
+        }
     }
 
     /**

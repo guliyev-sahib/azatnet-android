@@ -38,30 +38,37 @@
         android:minSdkVersion="34" />
     <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <application
         android:name=".AngApplication"
         android:allowBackup="true"
         android:banner="@mipmap/ic_banner"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="AzatNet"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppThemeDayNight.NoActionBar"
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:theme="@style/Theme.AzatNet.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:stopWithTask="false">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
@@ -84,7 +91,8 @@
             android:windowSoftInputMode="stateUnchanged" />
         <activity
             android:name=".ui.SettingsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AzatNet.Branded" />
         <activity
             android:name=".ui.PerAppProxyActivity"
             android:exported="false" />
@@ -150,16 +158,31 @@
             android:exported="false" />
         <activity
             android:name=".ui.AboutActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AzatNet.Branded" />
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AzatNet.Branded" />
+        <activity
+            android:name=".ui.VpnSettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AzatNet.Branded" />
+        <activity
+            android:name=".ui.SimpleWebViewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AzatNet.Branded" />
 
+        <!-- Stability: foreground notification in onCreate, START_STICKY; persistent/stopWithTask are not valid on <service> (use activity stopWithTask below). -->
         <service
             android:name=".service.V2RayVpnService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="specialUse"
-            android:label="@string/app_name"
+            android:label="AzatNet"
             android:permission="android.permission.BIND_VPN_SERVICE"
             android:process=":RunSoLibV2RayDaemon"
+            android:stopWithTask="false"
             tools:ignore="VpnServicePolicy">
             <intent-filter>
                 <action android:name="android.net.VpnService" />
@@ -176,7 +199,7 @@
             android:name=".service.V2RayProxyOnlyService"
             android:exported="false"
             android:foregroundServiceType="specialUse"
-            android:label="@string/app_name"
+            android:label="AzatNet"
             android:process=":RunSoLibV2RayDaemon">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"

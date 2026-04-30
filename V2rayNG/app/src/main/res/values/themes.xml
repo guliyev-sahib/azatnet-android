@@ -2,6 +2,8 @@
 
     <!-- Common base theme: put all shared items here so day/night can reuse -->
     <style name="AppThemeBase" parent="Theme.Material3.DayNight">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="fontFamily">@font/montserrat_regular</item>
         <!-- Primary colors - main tone: black -->
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
@@ -74,8 +76,45 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="Theme.AzatNet.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@color/azatnet_background</item>
+        <item name="android:navigationBarColor">@color/azatnet_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">@color/azatnet_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/ic_azatnet_logo</item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="31">0</item>
+    </style>
+
+    <!-- AzatNet-branded screens (settings, about, profile, web) -->
+    <style name="Theme.AzatNet.Branded" parent="AppThemeDayNight.NoActionBar">
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="fontFamily">@font/montserrat_regular</item>
+        <item name="android:windowBackground">@color/azatnet_background</item>
+        <item name="android:statusBarColor">@color/azatnet_background</item>
+        <item name="android:navigationBarColor">@color/azatnet_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <item name="android:textColorPrimary">@color/azatnet_text_primary</item>
+        <item name="android:textColorSecondary">@color/azatnet_text_secondary</item>
+        <item name="colorSurface">@color/azatnet_surface</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.AzatNet.AlertDialog</item>
+    </style>
+
+    <style name="ThemeOverlay.AzatNet.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@color/azatnet_surface</item>
+        <item name="colorSurface">@color/azatnet_surface</item>
+        <item name="android:textColorPrimary">@color/azatnet_text_primary</item>
+    </style>
+
     <style name="BrandedSwitch" parent="AppThemeDayNight">
         <item name="colorPrimary">@color/color_fab_active</item>
+    </style>
+
+    <style name="ThemeOverlay.AzatNet.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:navigationBarColor">@color/azatnet_background</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
 </resources>

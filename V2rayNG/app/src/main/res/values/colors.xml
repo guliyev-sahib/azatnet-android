@@ -54,4 +54,20 @@
     <color name="md_theme_shadow">#000000</color>
     <color name="md_theme_surfaceTint">#000000</color>
     <color name="md_theme_scrim">#000000</color>
+
+    <!-- AzatNet palette -->
+    <color name="azatnet_background">#0F1923</color>
+    <color name="azatnet_surface">#162130</color>
+    <color name="azatnet_accent">#FFFFFF</color>
+    <color name="azatnet_accent_dim">#40FFFFFF</color>
+    <color name="azatnet_text_primary">#FFFFFF</color>
+    <color name="azatnet_text_secondary">#80FFFFFF</color>
+    <color name="azatnet_green">#4CAF50</color>
+    <color name="azatnet_red">#FF5252</color>
+
+    <!-- Legacy names used in layouts (map to new palette) -->
+    <color name="azatnet_card_bg">@color/azatnet_surface</color>
+    <color name="azatnet_accent_muted">@color/azatnet_text_secondary</color>
+
+    <color name="azatnet_footer_muted">#99FFFFFF</color>
 </resources>

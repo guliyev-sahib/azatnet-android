@@ -26,7 +26,10 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 
 object NotificationManager {
-    private const val NOTIFICATION_ID = 1
+    /** Foreground notification id for VPN / proxy services (must match [startForeground] calls). */
+    const val VPN_FOREGROUND_NOTIFICATION_ID = 1
+
+    private const val NOTIFICATION_ID = VPN_FOREGROUND_NOTIFICATION_ID
     private const val NOTIFICATION_PENDING_INTENT_CONTENT = 0
     private const val NOTIFICATION_PENDING_INTENT_STOP_V2RAY = 1
     private const val NOTIFICATION_PENDING_INTENT_RESTART_V2RAY = 2
@@ -94,16 +97,7 @@ object NotificationManager {
         }
     }
 
-    /**
-     * Shows the notification.
-     * @param currentConfig The current profile configuration.
-     */
-    fun showNotification(currentConfig: ProfileItem?) {
-        val service = getService() ?: return
-
-        // Reset last query time to avoid querying stats too soon after showing the notification
-        lastQueryTime = System.currentTimeMillis()
-
+    private fun buildNotificationBuilder(service: Service, currentConfig: ProfileItem?): NotificationCompat.Builder {
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
 
         val startMainIntent = Intent(service, MainActivity::class.java)
@@ -123,12 +117,10 @@ object NotificationManager {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 createNotificationChannel()
             } else {
-                // If earlier version channel ID is not used
-                // https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#NotificationCompat.Builder(android.content.Context)
                 ""
             }
 
-        mBuilder = NotificationCompat.Builder(service, channelId)
+        return NotificationCompat.Builder(service, channelId)
             .setSmallIcon(R.drawable.ic_stat_name)
             .setContentTitle(currentConfig?.remarks)
             .setPriority(NotificationCompat.PRIORITY_MIN)
@@ -146,10 +138,27 @@ object NotificationManager {
                 service.getString(R.string.title_service_restart),
                 restartV2RayPendingIntent
             )
+    }
 
-        //mBuilder?.setDefaults(NotificationCompat.FLAG_ONLY_ALERT_ONCE)
+    /**
+     * Builds the foreground notification for the VPN/proxy service (same content as [showNotification]).
+     */
+    fun createForegroundNotification(service: Service, currentConfig: ProfileItem?): Notification {
+        lastQueryTime = System.currentTimeMillis()
+        val builder = buildNotificationBuilder(service, currentConfig)
+        mBuilder = builder
+        return builder.build()
+    }
 
-        service.startForeground(NOTIFICATION_ID, mBuilder?.build())
+    /**
+     * Shows the notification.
+     * @param currentConfig The current profile configuration.
+     */
+    fun showNotification(currentConfig: ProfileItem?) {
+        val service = getService() ?: return
+        lastQueryTime = System.currentTimeMillis()
+        mBuilder = buildNotificationBuilder(service, currentConfig)
+        service.startForeground(VPN_FOREGROUND_NOTIFICATION_ID, mBuilder?.build())
     }
 
     /**

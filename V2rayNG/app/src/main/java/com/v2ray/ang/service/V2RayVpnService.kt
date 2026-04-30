@@ -26,7 +26,6 @@ import com.v2ray.ang.handler.NotificationManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.V2RayServiceManager
 import com.v2ray.ang.util.MyContextWrapper
-import com.v2ray.ang.util.Utils
 import java.lang.ref.SoftReference
 
 @SuppressLint("VpnServicePolicy")
@@ -229,14 +228,8 @@ class V2RayVpnService : VpnService(), ServiceControl {
         }
 
         // Configure DNS servers
-        //if (MmkvManager.decodeSettingsBool(AppConfig.PREF_LOCAL_DNS_ENABLED) == true) {
-        //  builder.addDnsServer(PRIVATE_VLAN4_ROUTER)
-        //} else {
-        SettingsManager.getVpnDnsServers().forEach {
-            if (Utils.isPureIpAddress(it)) {
-                builder.addDnsServer(it)
-            }
-        }
+        builder.addDnsServer("8.8.8.8")
+        builder.addDnsServer("1.1.1.1")
 
         builder.setSession(V2RayServiceManager.getRunningServerName())
     }

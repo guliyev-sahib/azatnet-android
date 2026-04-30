@@ -75,6 +75,12 @@ object AppConfig {
     const val PREF_AUTO_REMOVE_INVALID_AFTER_TEST = "pref_auto_remove_invalid_after_test"
     const val PREF_AUTO_SORT_AFTER_TEST = "pref_auto_sort_after_test"
 
+    /** AzatNet profile / activation (MMKV settings namespace). */
+    const val PREF_PREMIUM_UNTIL_MS = "pref_premium_until_ms"
+
+    /** One-time prompt to disable battery optimization for stable VPN. */
+    const val PREF_BATTERY_OPTIMIZATION_PROMPTED = "pref_battery_optimization_prompted"
+
     /** Cache keys. */
     const val CACHE_SUBSCRIPTION_ID = "cache_subscription_id"
 
@@ -167,7 +173,7 @@ object AppConfig {
 
     /** Notification channel IDs and names. */
     const val RAY_NG_CHANNEL_ID = "RAY_NG_M_CH_ID"
-    const val RAY_NG_CHANNEL_NAME = "v2rayNG Background Service"
+    const val RAY_NG_CHANNEL_NAME = "AzatNet Background Service"
     const val SUBSCRIPTION_UPDATE_CHANNEL = "subscription_update_channel"
     const val SUBSCRIPTION_UPDATE_CHANNEL_NAME = "Subscription Update Service"
 

@@ -7,6 +7,8 @@ enum class Language(val code: String) {
     TRADITIONAL_CHINESE("zh-rTW"),
     VIETNAMESE("vi"),
     RUSSIAN("ru"),
+    TURKMEN("tk"),
+    TURKISH("tr"),
     PERSIAN("fa"),
     ARABIC("ar"),
     BANGLA("bn"),

@@ -27,15 +27,19 @@ import com.v2ray.ang.handler.AngConfigManager
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.SpeedtestManager
+import com.v2ray.ang.handler.V2RayServiceManager
 import com.v2ray.ang.util.MessageUtil
 import com.v2ray.ang.util.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Collections
+import java.util.Locale
 import java.util.regex.PatternSyntaxException
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -46,7 +50,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val isRunning by lazy { MutableLiveData<Boolean>() }
     val updateListAction by lazy { MutableLiveData<Int>() }
     val updateTestResultAction by lazy { MutableLiveData<String>() }
+    /** Formatted proxy up/down speed for the main screen; null when disconnected. */
+    val trafficSpeed by lazy { MutableLiveData<String?>(null) }
     private val tcpingTestScope by lazy { CoroutineScope(Dispatchers.IO) }
+    private var trafficSpeedJob: Job? = null
 
     /**
      * Refer to the official documentation for [registerReceiver](https://developer.android.com/reference/androidx/core/content/ContextCompat#registerReceiver(android.content.Context,android.content.BroadcastReceiver,android.content.IntentFilter,int):
@@ -65,9 +72,62 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     override fun onCleared() {
         getApplication<AngApplication>().unregisterReceiver(mMsgReceiver)
         tcpingTestScope.coroutineContext[Job]?.cancelChildren()
+        trafficSpeedJob?.cancel()
+        trafficSpeedJob = null
         SpeedtestManager.closeAllTcpSockets()
         Log.i(AppConfig.TAG, "Main ViewModel is cleared")
         super.onCleared()
+    }
+
+    /**
+     * Human-readable speed: "—" if &lt; 1024 B/s, else KB/s or MB/s.
+     */
+    private fun formatTrafficSpeedBps(bytesPerSecond: Long): String {
+        if (bytesPerSecond < 1024L) {
+            return "—"
+        }
+        if (bytesPerSecond < 1048576L) {
+            return String.format(Locale.US, "%.1f KB/s", bytesPerSecond / 1024.0)
+        }
+        return String.format(Locale.US, "%.1f MB/s", bytesPerSecond / (1024.0 * 1024.0))
+    }
+
+    private fun stopTrafficSpeedPolling() {
+        trafficSpeedJob?.cancel()
+        trafficSpeedJob = null
+        trafficSpeed.postValue(null)
+    }
+
+    private fun startTrafficSpeedPolling() {
+        trafficSpeedJob?.cancel()
+        trafficSpeedJob = viewModelScope.launch(Dispatchers.Default) {
+            var lastQueryTime = System.currentTimeMillis()
+            while (isActive) {
+                delay(1000L)
+                if (isRunning.value != true) break
+                val guid = MmkvManager.getSelectServer() ?: continue
+                val config = MmkvManager.decodeServerConfig(guid) ?: continue
+                val outboundTags = config.getAllOutboundTags()
+                outboundTags.remove(AppConfig.TAG_DIRECT)
+
+                val queryTime = System.currentTimeMillis()
+                val sinceLastQueryIn = (queryTime - lastQueryTime).coerceAtLeast(1000L)
+                val sinceLastQueryInSeconds = sinceLastQueryIn / 1000.0
+                lastQueryTime = queryTime
+
+                var proxyUp = 0L
+                var proxyDown = 0L
+                outboundTags.forEach { tag ->
+                    proxyUp += V2RayServiceManager.queryStats(tag, AppConfig.UPLINK)
+                    proxyDown += V2RayServiceManager.queryStats(tag, AppConfig.DOWNLINK)
+                }
+                val upSpeed = (proxyUp / sinceLastQueryInSeconds).toLong()
+                val downSpeed = (proxyDown / sinceLastQueryInSeconds).toLong()
+                val text =
+                    "↑ ${formatTrafficSpeedBps(upSpeed)}  ↓ ${formatTrafficSpeedBps(downSpeed)}"
+                trafficSpeed.postValue(text)
+            }
+        }
     }
 
     /**
@@ -445,24 +505,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             when (intent?.getIntExtra("key", 0)) {
                 AppConfig.MSG_STATE_RUNNING -> {
                     isRunning.value = true
+                    startTrafficSpeedPolling()
                 }
 
                 AppConfig.MSG_STATE_NOT_RUNNING -> {
                     isRunning.value = false
+                    stopTrafficSpeedPolling()
                 }
 
                 AppConfig.MSG_STATE_START_SUCCESS -> {
                     getApplication<AngApplication>().toastSuccess(R.string.toast_services_success)
                     isRunning.value = true
+                    startTrafficSpeedPolling()
                 }
 
                 AppConfig.MSG_STATE_START_FAILURE -> {
                     getApplication<AngApplication>().toastError(R.string.toast_services_failure)
                     isRunning.value = false
+                    stopTrafficSpeedPolling()
                 }
 
                 AppConfig.MSG_STATE_STOP_SUCCESS -> {
                     isRunning.value = false
+                    stopTrafficSpeedPolling()
                 }
 
                 AppConfig.MSG_MEASURE_DELAY_SUCCESS -> {
